@@ -1,0 +1,33 @@
+name: Build JARVIS ULTIMATE
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-8-jdk python3-pip zip unzip libffi-dev libssl-dev liblzo2-dev libgl1-mesa-dev libgles2-mesa-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-omx libmtdev-dev xclip xsel libjpeg-dev
+          python3 -m pip install --upgrade pip
+          python3 -m pip install buildozer==1.5.0 cython==0.29.33 kivy==2.2.0
+
+      - name: Build APK
+        run: |
+          yes | buildozer android debug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: JARVIS-ULTIMATE-APK
+          path: bin/*.apk
+          retention-days: 7
